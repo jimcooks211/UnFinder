@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Install UnFinder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #080c12;
+    --surface:    #0f1520;
+    --surface2:   #161e2e;
+    --border:     rgba(255,255,255,0.07);
+    --accent:     #00e5ff;
+    --accent-dim: rgba(0,229,255,0.08);
+    --green:      #4caf7d;
+    --green-dim:  rgba(76,175,125,0.12);
+    --text:       #e8f0fe;
+    --muted:      #5a6a88;
+    --soft:       #8aa0c0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* glow */
+  body::before {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    top: -200px; right: -200px;
+    background: radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* hero */
+  .hero {
+    text-align: center;
+    padding: 64px 0 48px;
+    animation: up 0.7s ease both;
+  }
+  .icon-ring {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px; height: 88px;
+    background: linear-gradient(145deg, #0f1520, #161e2e);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 24px;
+    box-shadow: 0 0 40px rgba(0,229,255,0.1), 0 20px 60px rgba(0,0,0,0.5);
+    margin-bottom: 24px;
+  }
+  .icon-ring svg { width: 44px; height: 44px; color: var(--accent); }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(34px, 8vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  h1 span { color: var(--accent); }
+  .sub {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 360px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* tabs */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 5px;
+    margin-bottom: 24px;
+    animation: up 0.7s 0.1s ease both;
+  }
+  .tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 9px 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .tab.active { background: var(--surface2); color: var(--text); }
+  .tab .num {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  /* panels */
+  .panel { display: none; animation: up 0.4s ease both; }
+  .panel.active { display: block; }
+
+  /* card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 14px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .badge.rec  { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,255,0.15); }
+  .badge.live { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(76,175,125,0.2); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+  /* steps */
+  .steps { display: flex; flex-direction: column; }
+  .step {
+    display: flex;
+    gap: 14px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+  .step:last-child { padding-bottom: 0; }
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 13px; top: 30px; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(0,229,255,0.15), transparent);
+  }
+  .step-n {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid rgba(0,229,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    position: relative; z-index: 1;
+  }
+  .step-body { flex: 1; padding-top: 3px; }
+  .step-t { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .step-d { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--soft);
+    margin: 1px;
+    vertical-align: middle;
+  }
+
+  /* cta */
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: all 0.25s ease;
+  }
+  .cta.primary {
+    background: var(--accent);
+    color: #000e14;
+    box-shadow: 0 4px 20px rgba(0,229,255,0.2);
+  }
+  .cta.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,0.3); }
+  .cta.ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .cta.ghost:hover { border-color: rgba(0,229,255,0.2); }
+
+  /* info */
+  .info {
+    display: flex;
+    gap: 10px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--soft);
+    line-height: 1.6;
+  }
+  .info strong { color: var(--text); }
+
+  /* sub cards */
+  .sub-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .sub-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    margin: 12px 0;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  footer {
+    text-align: center;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  @keyframes up {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 20px; }
+    .hero { padding: 48px 0 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="icon-ring">
+      <svg viewBox="0 0 44 44" fill="none">
+        <circle cx="18" cy="18" r="11" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M27 27L38 38" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M13 18h10M18 13v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <p class="eyebrow">iOS Installation Guide</p>
+    <h1>Get <span>UnFinder</span><br>on your iPhone</h1>
+    <p class="sub">Three ways to install — no App Store needed. Pick whichever feels easiest.</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="show(1,this)"><span class="num">1</span>Profile<br>Install</button>
+    <button class="tab"        onclick="show(2,this)"><span class="num">2</span>Safari<br>Direct</button>
+    <button class="tab"        onclick="show(3,this)"><span class="num">3</span>Other<br>Options</button>
+  </div>
+
+  <!-- Panel 1: mobileconfig -->
+  <div class="panel active" id="p1">
+    <div class="card">
+      <div class="badge rec">⭐ Recommended</div>
+      <div class="card-title">Install via Profile</div>
+      <div class="card-desc">Downloads a Web Clip that places the UnFinder icon directly on your home screen.</div>
+      <div class="badge live">✓ Works right now</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <div class="step-t">Tap the download button below</div>
+            <div class="step-d">Downloads a small <strong style="color:var(--soft)">.mobileconfig</strong> file — only contains a shortcut to UnFinder.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <div class="step-t">Allow the download</div>
+            <div class="step-d">Safari asks <em>"Allow website to download configuration profile?"</em> — tap <span class="chip">Allow</span>.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <div class="step-t">Open Settings → Profile Downloaded</div>
+            <div class="step-d">A banner appears at the top of <span class="chip">⚙️ Settings</span>. Tap it, then tap <span class="chip">Install</span> top-right.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <div class="step-t">Done — UnFinder is on your home screen</div>
+            <div class="step-d">Tap the icon anytime to open the app instantly.</div>
+          </div>
+        </div>
+      </div>
+      <a class="cta primary" href="webclip.mobileconfig" download>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v9M4.5 6.5L8 10l3.5-3.5M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download Install Profile
+      </a>
+      <div class="info">
+        <span>🔒</span>
+        <span>This profile <strong>only</strong> adds a home screen bookmark. It does not collect data or modify device settings.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 2: Safari -->
+  <div class="panel" id="p2">
+    <div class="card">
+      <div class="badge live">✓ Works right now</div>
+      <div class="card-title">Add via Safari</div>
+      <div class="card-desc">Open UnFinder in Safari and use the Share menu to add to your home screen.</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <div class="step-t">Open in Safari specifically</div>
+            <div class="step-d">Must be Safari — other browsers won't show the option.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <div class="step-t">Tap the Share button <span class="chip">⬆️</span></div>
+            <div class="step-d">Bottom toolbar on iPhone, top-right on iPad.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <div class="step-t">Tap <span class="chip">＋ Add to Home Screen</span></div>
+            <div class="step-d">Scroll through the share sheet to find it.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <div class="step-t">Confirm name and tap <span class="chip">Add</span></div>
+          </div>
+        </div>
+      </div>
+      <a class="cta primary" href="https://jimcooks211.github.io/UnFinder/" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M8 1.5C8 1.5 5.5 4 5.5 8s2.5 6.5 2.5 6.5M8 1.5C8 1.5 10.5 4 10.5 8S8 14.5 8 14.5M1.5 8h13" stroke="currentColor" stroke-width="1.4"/></svg>
+        Open UnFinder in Safari
+      </a>
+    </div>
+  </div>
+
+  <!-- Panel 3: Other -->
+  <div class="panel" id="p3">
+    <div class="card">
+      <div class="card-title">Alternative Methods</div>
+      <div class="card-desc">Not using Safari? Here are other ways to install UnFinder.</div>
+
+      <div class="sub-card">
+        <div class="sub-title">🔵 Chrome for iOS</div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-t">Open UnFinder in Chrome</div></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-t">Tap <span class="chip">⋯ More</span> bottom-right</div></div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-t">Tap <span class="chip">Add to Home Screen</span> → <span class="chip">Add</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="divider">or</div>
+
+      <div class="sub-card">
+        <div class="sub-title">🎯 iOS Shortcuts App</div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-t">Open <span class="chip">⚡ Shortcuts</span> app</div></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-t">Tap <span class="chip">＋ New Shortcut</span> → add <span class="chip">Open URLs</span> action</div></div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-t">Paste <code style="font-size:11px;color:var(--accent)">https://jimcooks211.github.io/UnFinder/</code></div></div></div>
+          <div class="step"><div class="step-n">4</div><div class="step-body"><div class="step-t">Tap <span class="chip">⋯ Details</span> → <span class="chip">Add to Home Screen</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="divider">or</div>
+
+      <div class="sub-card">
+        <div class="sub-title">🌊 Microsoft Edge</div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-t">Open UnFinder in Edge</div></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-t">Tap <span class="chip">⋯ More</span> → <span class="chip">Add to Phone</span></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>UnFinder · <a href="https://jimcooks211.github.io/UnFinder/" style="color:var(--accent);text-decoration:none">Open App</a></p>
+    <p style="margin-top:8px;font-size:12px;color:rgba(90,106,136,0.6)">© 2026 UnFinder</p>
+  </footer>
+
+</div>
+
+<script>
+  function show(n, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'))
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'))
+    document.getElementById('p' + n).classList.add('active')
+    btn.classList.add('active')
+  }
+</script>
+</body>
+</html>
